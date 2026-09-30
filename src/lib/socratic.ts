@@ -70,13 +70,13 @@ export function buildSocraticReply(
 ): { content: string; citations: Citation[]; topic: string } {
   const topic = detectTopic(question);
   const opener = SOCRATIC_OPENERS[question.length % SOCRATIC_OPENERS.length];
-  const steps = TOPIC_PROMPTS[topic] ?? TOPIC_PROMPTS["General Study Skills"];
+  const steps = TOPIC_PROMPTS[topic] ?? TOPIC_PROMPTS["General Study Skills"] ?? [];
 
   const relevant = documents.filter(
     (d) =>
       d.status === "saved" &&
       (topic.split(" ").some((w) => d.title.toLowerCase().includes(w.toLowerCase())) ||
-        d.subject.toLowerCase().includes(topic.split(" ")[0].toLowerCase())),
+        d.subject.toLowerCase().includes((topic.split(" ")[0] ?? "").toLowerCase())),
   );
   const source = relevant.length > 0 ? relevant : documents.filter((d) => d.status === "saved");
 

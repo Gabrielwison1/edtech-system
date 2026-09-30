@@ -47,7 +47,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set, get) => ({
   personas: PERSONAS,
-  activePersonaId: PERSONAS[0].id,
+  activePersonaId: PERSONAS[0]!.id,
   schools: SCHOOLS,
   teachers: TEACHERS,
   students: STUDENTS,
@@ -194,5 +194,5 @@ export const useAppStore = create<AppState>((set, get) => ({
 }));
 
 export function useActivePersona() {
-  return useAppStore((s) => s.personas.find((p) => p.id === s.activePersonaId) ?? s.personas[0]);
+  return useAppStore((s) => s.personas.find((p) => p.id === s.activePersonaId) ?? s.personas[0]!);
 }
