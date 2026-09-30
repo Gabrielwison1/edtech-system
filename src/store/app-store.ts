@@ -40,7 +40,7 @@ interface AppState {
   uploadDocument: (input: { title: string; subject: string; term: string; schoolId: string; teacherId: string }) => string;
   advanceDocument: (id: string) => void;
   sendChatMessage: (studentId: string, text: string) => void;
-  sendDirectMessage: (studentId: string, teacherId: string, text: string) => void;
+  sendDirectMessage: (studentId: string, teacherId: string, text: string, from?: "student" | "teacher") => void;
   generateQuiz: (input: { schoolId: string; subject: string; topics: string[]; createdBy: string }) => Quiz;
   recordAttempt: (attempt: Omit<QuizAttempt, "id" | "takenAt">) => void;
 }
@@ -139,7 +139,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     }));
   },
 
-  sendDirectMessage: (studentId, teacherId, text) =>
+  sendDirectMessage: (studentId, teacherId, text, from = "student") =>
     set((s) => ({
       directMessages: [
         ...s.directMessages,
@@ -147,7 +147,7 @@ export const useAppStore = create<AppState>((set, get) => ({
           id: uid(),
           studentId,
           teacherId,
-          from: "student",
+          from,
           content: text,
           createdAt: new Date().toISOString(),
         },
