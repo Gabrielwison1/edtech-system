@@ -1,4 +1,4 @@
-# Exact Screenshot
+# EdTech System
 
 Implement exactly the screenshot and nothing else
 
