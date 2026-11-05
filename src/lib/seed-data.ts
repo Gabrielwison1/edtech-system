@@ -404,7 +404,8 @@ export const QUIZZES: Quiz[] = [
           "Always towards zero",
         ],
         correctIndex: 1,
-        explanation: "We move against the gradient because the gradient points uphill on the loss surface.",
+        explanation:
+          "We move against the gradient because the gradient points uphill on the loss surface.",
       },
     ],
   },
@@ -472,5 +473,14 @@ export const PERSONAS: Persona[] = [
     name: "Amina Bello",
     schoolId: "sch_atlantic",
     studentId: "std_amina",
+  },
+  {
+    id: "p_student_tunde",
+    label: "Student — Tunde (Lagos City College)",
+    shortLabel: "Student · Tunde",
+    role: "student",
+    name: "Tunde Balogun",
+    schoolId: "sch_lagos_city",
+    studentId: "std_tunde",
   },
 ];

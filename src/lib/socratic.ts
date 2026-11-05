@@ -122,7 +122,12 @@ const QUESTION_BANK: Record<string, QuizQuestion[]> = {
       id: "gq_gd_1",
       topic: "Gradient Descent",
       prompt: "A loss curve that zig-zags wildly usually signals what?",
-      options: ["Too small a learning rate", "Too large a learning rate", "Too much data", "Too few features"],
+      options: [
+        "Too small a learning rate",
+        "Too large a learning rate",
+        "Too much data",
+        "Too few features",
+      ],
       correctIndex: 1,
       explanation: "Oversized steps overshoot the minimum on each update.",
     },

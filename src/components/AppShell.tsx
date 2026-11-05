@@ -1,10 +1,10 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   Building2,
   GraduationCap,
   LayoutDashboard,
   Menu,
-  MessageSquare,
+  LifeBuoy,
   Moon,
   Sparkles,
   Sun,
@@ -35,11 +35,26 @@ const NAV: NavItem[] = [
     icon: LayoutDashboard,
     roles: ["system_admin", "school_admin", "teacher", "student"],
   },
-  { to: "/schools", label: "Schools & Activation", icon: Building2, roles: ["system_admin", "school_admin"] },
+  {
+    to: "/schools",
+    label: "Schools & Activation",
+    icon: Building2,
+    roles: ["system_admin", "school_admin"],
+  },
   { to: "/classroom", label: "Classroom", icon: BookOpen, roles: ["teacher"] },
   { to: "/tutor", label: "AI Tutor", icon: Sparkles, roles: ["student"] },
-  { to: "/practice", label: "Practice Quizzes", icon: ClipboardList, roles: ["student", "teacher"] },
-  { to: "/messages", label: "Teacher Messages", icon: MessageSquare, roles: ["student", "teacher"] },
+  {
+    to: "/practice",
+    label: "Practice Quizzes",
+    icon: ClipboardList,
+    roles: ["student", "teacher"],
+  },
+  {
+    to: "/messages",
+    label: "Escalate to Teacher",
+    icon: LifeBuoy,
+    roles: ["student", "teacher"],
+  },
 ];
 
 function Brand({ compact = false }: { compact?: boolean }) {
@@ -94,9 +109,25 @@ function RoleSwitcher({ className }: { className?: string }) {
   const personas = useAppStore((s) => s.personas);
   const activePersonaId = useAppStore((s) => s.activePersonaId);
   const setPersona = useAppStore((s) => s.setPersona);
+  const navigate = useNavigate();
+
+  const ROLE_HOME: Record<string, string> = {
+    system_admin: "/",
+    school_admin: "/",
+    teacher: "/classroom",
+    student: "/tutor",
+  };
+
+  const handleChange = (id: string) => {
+    setPersona(id);
+    const persona = personas.find((p) => p.id === id);
+    if (persona) {
+      void navigate({ to: ROLE_HOME[persona.role] ?? "/" });
+    }
+  };
 
   return (
-    <Select value={activePersonaId} onValueChange={setPersona}>
+    <Select value={activePersonaId} onValueChange={handleChange}>
       <SelectTrigger className={cn("h-11 w-full bg-card text-left text-sm", className)}>
         <SelectValue />
       </SelectTrigger>
@@ -133,8 +164,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   const school = useAppStore((s) => s.schools.find((x) => x.id === persona.schoolId));
 
   return (
-    <div className="flex min-h-screen w-full bg-background">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-6 border-r bg-sidebar p-4 md:flex">
+    <div
+      className="flex min-h-screen w-full bg-background"
+      style={{ "--sidebar-offset": "0px" } as React.CSSProperties}
+    >
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-6 overflow-y-auto border-r bg-sidebar p-4 md:flex">
         <Brand />
         <div className="space-y-2">
           <p className="px-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">

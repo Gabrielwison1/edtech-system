@@ -54,12 +54,14 @@ export function StatCard({
 }
 
 export function MasteryBar({ value }: { value: number }) {
-  const tone =
-    value < 50 ? "bg-warning" : value < 70 ? "bg-primary" : "bg-action";
+  const tone = value < 50 ? "bg-warning" : value < 70 ? "bg-primary" : "bg-action";
   return (
     <div className="flex min-w-0 items-center gap-2">
       <div className="h-2 w-full min-w-16 overflow-hidden rounded-full bg-muted">
-        <div className={cn("h-full rounded-full transition-all", tone)} style={{ width: `${value}%` }} />
+        <div
+          className={cn("h-full rounded-full transition-all", tone)}
+          style={{ width: `${value}%` }}
+        />
       </div>
       <span className="w-10 shrink-0 text-right text-xs font-semibold tabular-nums">{value}%</span>
     </div>

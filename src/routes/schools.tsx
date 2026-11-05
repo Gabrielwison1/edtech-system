@@ -13,7 +13,10 @@ export const Route = createFileRoute("/schools")({
   head: () => ({
     meta: [
       { title: "Schools & Activation — Scholaris" },
-      { name: "description", content: "Manage pilot schools and student activation fees across Lagos." },
+      {
+        name: "description",
+        content: "Manage pilot schools and student activation fees across Lagos.",
+      },
       { property: "og:title", content: "Schools & Activation — Scholaris" },
       { property: "og:description", content: "Track paid and unpaid activation fees per student." },
       { property: "og:type", content: "website" },
@@ -33,12 +36,20 @@ function SchoolsPage() {
   const [q, setQ] = useState("");
 
   if (persona.role === "student" || persona.role === "teacher") {
-    return <PageHeader title="Schools & Activation" subtitle="Only administrators can manage activation." />;
+    return (
+      <PageHeader
+        title="Schools & Activation"
+        subtitle="Only administrators can manage activation."
+      />
+    );
   }
 
-  const visibleSchools = persona.role === "school_admin" ? schools.filter((s) => s.id === persona.schoolId) : schools;
+  const visibleSchools =
+    persona.role === "school_admin" ? schools.filter((s) => s.id === persona.schoolId) : schools;
   const students = allStudents.filter(
-    (st) => visibleSchools.some((s) => s.id === st.schoolId) && st.name.toLowerCase().includes(q.toLowerCase()),
+    (st) =>
+      visibleSchools.some((s) => s.id === st.schoolId) &&
+      st.name.toLowerCase().includes(q.toLowerCase()),
   );
   const paid = students.filter((s) => s.isActivated).length;
   const revenue = students
@@ -49,7 +60,9 @@ function SchoolsPage() {
     <div>
       <PageHeader
         title="Schools & Activation"
-        subtitle={persona.role === "system_admin" ? "All pilot schools in Lagos" : visibleSchools[0]?.name}
+        subtitle={
+          persona.role === "system_admin" ? "All pilot schools in Lagos" : (visibleSchools[0]?.name ?? "")
+        }
       />
       <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Schools" value={visibleSchools.length} />
@@ -61,7 +74,12 @@ function SchoolsPage() {
       <Card className="shadow-card">
         <CardHeader className="gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base">Students</CardTitle>
-          <Input placeholder="Search students…" value={q} onChange={(e) => setQ(e.target.value)} className="sm:max-w-xs" />
+          <Input
+            placeholder="Search students…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="sm:max-w-xs"
+          />
         </CardHeader>
         <CardContent className="p-0">
           {/* Mobile: stacked cards */}
@@ -72,7 +90,9 @@ function SchoolsPage() {
                 <li key={st.id} className="flex items-center justify-between gap-3 p-4">
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{st.name}</p>
-                    <p className="text-xs text-muted-foreground">{st.className} · {school?.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {st.className} · {school?.name}
+                    </p>
                     <FeeBadge paid={st.isActivated} fee={school?.activationFee ?? 0} />
                   </div>
                   <ActivationSwitch
@@ -107,7 +127,9 @@ function SchoolsPage() {
                     <td className="p-3">{st.className}</td>
                     <td className="p-3">{school?.name}</td>
                     <td className="p-3 tabular-nums">{st.guardianPhone}</td>
-                    <td className="p-3"><FeeBadge paid={st.isActivated} fee={school?.activationFee ?? 0} /></td>
+                    <td className="p-3">
+                      <FeeBadge paid={st.isActivated} fee={school?.activationFee ?? 0} />
+                    </td>
                     <td className="p-3 text-right">
                       <ActivationSwitch
                         checked={st.isActivated}
@@ -122,7 +144,9 @@ function SchoolsPage() {
               })}
             </tbody>
           </table>
-          {students.length === 0 && <p className="p-6 text-center text-sm text-muted-foreground">No students found.</p>}
+          {students.length === 0 && (
+            <p className="p-6 text-center text-sm text-muted-foreground">No students found.</p>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -131,18 +155,26 @@ function SchoolsPage() {
 
 function FeeBadge({ paid, fee }: { paid: boolean; fee: number }) {
   return paid ? (
-    <Badge className="mt-1 bg-action text-action-foreground hover:bg-action">Paid {naira(fee)}</Badge>
+    <Badge className="mt-1 bg-action text-action-foreground hover:bg-action">
+      Paid {naira(fee)}
+    </Badge>
   ) : (
-    <Badge variant="destructive" className="mt-1">Unpaid {naira(fee)}</Badge>
+    <Badge variant="destructive" className="mt-1">
+      Unpaid {naira(fee)}
+    </Badge>
   );
 }
 
-function ActivationSwitch({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+function ActivationSwitch({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
   return (
     <span className="touch-target inline-flex items-center justify-center">
       <Switch checked={checked} onCheckedChange={onChange} aria-label="Toggle activation" />
     </span>
   );
 }
-
-export { useMemo };

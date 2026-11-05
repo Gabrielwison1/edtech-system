@@ -17,7 +17,10 @@ export const Route = createFileRoute("/practice")({
       { title: "Practice Quizzes — Scholaris" },
       { name: "description", content: "Targeted practice quizzes built from your weakest topics." },
       { property: "og:title", content: "Practice Quizzes — Scholaris" },
-      { property: "og:description", content: "Take quizzes, see explanations and track your mastery." },
+      {
+        property: "og:description",
+        content: "Take quizzes, see explanations and track your mastery.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -38,34 +41,63 @@ function PracticePage() {
   const student = students.find((s) => s.id === persona.studentId);
 
   if (persona.role === "student" && student && !student.isActivated) {
-    return <ActivationLocked schoolName={schools.find((s) => s.id === student.schoolId)?.name ?? "your school"} />;
+    return (
+      <ActivationLocked
+        schoolName={schools.find((s) => s.id === student.schoolId)?.name ?? "your school"}
+      />
+    );
   }
-  if (active && student) return <QuizRunner quiz={active} studentId={student.id} onDone={() => setActive(null)} />;
+  if (active && student)
+    return <QuizRunner quiz={active} studentId={student.id} onDone={() => setActive(null)} />;
 
   return (
     <div>
-      <PageHeader title="Practice Quizzes" subtitle="Short, targeted quizzes on the topics that matter most." />
+      <PageHeader
+        title="Practice Quizzes"
+        subtitle="Short, targeted quizzes on the topics that matter most."
+      />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map((q) => {
           const mine = attempts.filter((a) => a.quizId === q.id && a.studentId === student?.id);
-          const best = mine.reduce((m, a) => Math.max(m, Math.round((a.score / a.total) * 100)), -1);
+          const best = mine.reduce(
+            (m, a) => Math.max(m, Math.round((a.score / a.total) * 100)),
+            -1,
+          );
           const taken = attempts.filter((a) => a.quizId === q.id).length;
           return (
             <Card key={q.id} className="flex flex-col shadow-card">
               <CardHeader>
                 <CardTitle className="text-base">{q.title}</CardTitle>
-                <p className="text-xs text-muted-foreground">{q.subject} · {q.questions.length} questions · by {q.createdBy}</p>
+                <p className="text-xs text-muted-foreground">
+                  {q.subject} · {q.questions.length} questions · by {q.createdBy}
+                </p>
               </CardHeader>
               <CardContent className="mt-auto space-y-3">
                 <div className="flex flex-wrap gap-1.5">
-                  {q.topics.map((t) => <Badge key={t} variant="secondary">{t}</Badge>)}
+                  {q.topics.map((t) => (
+                    <Badge key={t} variant="secondary">
+                      {t}
+                    </Badge>
+                  ))}
                 </div>
                 {student ? (
                   <div className="flex items-center justify-between gap-2">
-                    <span className={cn("text-sm font-semibold", best < 0 ? "text-muted-foreground" : best < 50 ? "text-warning" : "text-action")}>
+                    <span
+                      className={cn(
+                        "text-sm font-semibold",
+                        best < 0
+                          ? "text-muted-foreground"
+                          : best < 50
+                            ? "text-warning"
+                            : "text-action",
+                      )}
+                    >
                       {best < 0 ? "Not attempted" : `Best: ${best}%`}
                     </span>
-                    <Button className="touch-target bg-action text-action-foreground hover:bg-action/90" onClick={() => setActive(q)}>
+                    <Button
+                      className="touch-target bg-action text-action-foreground hover:bg-action/90"
+                      onClick={() => setActive(q)}
+                    >
                       {best < 0 ? "Start" : "Retake"}
                     </Button>
                   </div>
@@ -82,7 +114,15 @@ function PracticePage() {
   );
 }
 
-function QuizRunner({ quiz, studentId, onDone }: { quiz: Quiz; studentId: string; onDone: () => void }) {
+function QuizRunner({
+  quiz,
+  studentId,
+  onDone,
+}: {
+  quiz: Quiz;
+  studentId: string;
+  onDone: () => void;
+}) {
   const recordAttempt = useAppStore((s) => s.recordAttempt);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -93,16 +133,30 @@ function QuizRunner({ quiz, studentId, onDone }: { quiz: Quiz; studentId: string
     setSubmitted(true);
     recordAttempt({ quizId: quiz.id, studentId, score, total: quiz.questions.length });
     const pct = Math.round((score / quiz.questions.length) * 100);
-    toast[pct >= 50 ? "success" : "warning"](`You scored ${score}/${quiz.questions.length} (${pct}%)`);
+    toast[pct >= 50 ? "success" : "warning"](
+      `You scored ${score}/${quiz.questions.length} (${pct}%)`,
+    );
   };
 
   return (
     <div className="mx-auto max-w-2xl space-y-4 pb-8">
-      <PageHeader title={quiz.title} subtitle={submitted ? `Score: ${score}/${quiz.questions.length}` : "Choose one answer per question."} action={<Button variant="outline" onClick={onDone}>Back</Button>} />
+      <PageHeader
+        title={quiz.title}
+        subtitle={
+          submitted ? `Score: ${score}/${quiz.questions.length}` : "Choose one answer per question."
+        }
+        action={
+          <Button variant="outline" onClick={onDone}>
+            Back
+          </Button>
+        }
+      />
       {quiz.questions.map((q, qi) => (
         <Card key={q.id} className="shadow-card">
           <CardContent className="space-y-3 p-4">
-            <p className="font-medium">{qi + 1}. {q.prompt}</p>
+            <p className="font-medium">
+              {qi + 1}. {q.prompt}
+            </p>
             <div className="grid gap-2">
               {q.options.map((opt, oi) => {
                 const picked = answers[q.id] === oi;
@@ -133,9 +187,15 @@ function QuizRunner({ quiz, studentId, onDone }: { quiz: Quiz; studentId: string
         </Card>
       ))}
       {submitted ? (
-        <Button className="touch-target w-full" onClick={onDone}>Back to quizzes</Button>
+        <Button className="touch-target w-full" onClick={onDone}>
+          Back to quizzes
+        </Button>
       ) : (
-        <Button disabled={!complete} className="touch-target w-full bg-action text-action-foreground hover:bg-action/90" onClick={submit}>
+        <Button
+          disabled={!complete}
+          className="touch-target w-full bg-action text-action-foreground hover:bg-action/90"
+          onClick={submit}
+        >
           Submit answers
         </Button>
       )}

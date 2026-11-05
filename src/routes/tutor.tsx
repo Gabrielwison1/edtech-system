@@ -13,9 +13,15 @@ export const Route = createFileRoute("/tutor")({
   head: () => ({
     meta: [
       { title: "AI Tutor — Scholaris" },
-      { name: "description", content: "A Socratic AI tutor grounded in your teacher's own course notes." },
+      {
+        name: "description",
+        content: "A Socratic AI tutor grounded in your teacher's own course notes.",
+      },
       { property: "og:title", content: "AI Tutor — Scholaris" },
-      { property: "og:description", content: "Ask questions and get guided, cited, step-by-step hints." },
+      {
+        property: "og:description",
+        content: "Ask questions and get guided, cited, step-by-step hints.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -36,14 +42,20 @@ function TutorPage() {
   const chat = allChat.filter((m) => m.studentId === student?.id);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   }, [chat.length]);
 
   if (persona.role !== "student" || !student) {
-    return <PageHeader title="AI Tutor" subtitle="Switch to a student persona to chat with the tutor." />;
+    return (
+      <PageHeader title="AI Tutor" subtitle="Switch to a student persona to chat with the tutor." />
+    );
   }
   if (!student.isActivated) {
-    return <ActivationLocked schoolName={schools.find((s) => s.id === student.schoolId)?.name ?? "your school"} />;
+    return (
+      <ActivationLocked
+        schoolName={schools.find((s) => s.id === student.schoolId)?.name ?? "your school"}
+      />
+    );
   }
 
   const submit = () => {
@@ -55,10 +67,16 @@ function TutorPage() {
 
   return (
     <div className="pb-40">
-      <PageHeader title="AI Tutor" subtitle="I guide you with questions — I won't just hand you the answer." />
+      <PageHeader
+        title="AI Tutor"
+        subtitle="I guide you with questions — I won't just hand you the answer."
+      />
       <div className="space-y-4">
         {chat.map((m) => (
-          <div key={m.id} className={cn("flex", m.role === "student" ? "justify-end" : "justify-start")}>
+          <div
+            key={m.id}
+            className={cn("flex", m.role === "student" ? "justify-end" : "justify-start")}
+          >
             <div
               className={cn(
                 "max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-card",
@@ -71,7 +89,10 @@ function TutorPage() {
                   {m.citations.map((c, i) => (
                     <p key={i} className="flex gap-1.5 text-xs text-muted-foreground">
                       <BookOpen className="mt-0.5 h-3.5 w-3.5 shrink-0 text-action" />
-                      <span><span className="font-semibold">{c.documentTitle}</span> · {c.chunk} — “{c.excerpt}”</span>
+                      <span>
+                        <span className="font-semibold">{c.documentTitle}</span> · {c.chunk} — “
+                        {c.excerpt}”
+                      </span>
                     </p>
                   ))}
                 </div>
@@ -82,7 +103,10 @@ function TutorPage() {
         <div ref={endRef} />
       </div>
 
-      <div className="safe-bottom fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 backdrop-blur md:left-64">
+      <div
+        className="safe-bottom fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 backdrop-blur"
+        style={{ left: "var(--sidebar-offset, 0px)" } as React.CSSProperties}
+      >
         <form
           className="mx-auto flex max-w-3xl items-end gap-2 p-3"
           onSubmit={(e) => {
@@ -104,7 +128,12 @@ function TutorPage() {
             rows={1}
             className="max-h-32 min-h-11 resize-none text-base"
           />
-          <Button type="submit" size="icon" className="touch-target shrink-0 bg-action text-action-foreground hover:bg-action/90" aria-label="Send">
+          <Button
+            type="submit"
+            size="icon"
+            className="touch-target shrink-0 bg-action text-action-foreground hover:bg-action/90"
+            aria-label="Send"
+          >
             <Send className="h-4 w-4" />
           </Button>
         </form>

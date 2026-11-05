@@ -19,6 +19,16 @@ import {
 } from "@/lib/seed-data";
 import { buildSocraticReply, generateQuestionsForTopics } from "@/lib/socratic";
 
+const THEME_KEY = "scholaris_theme";
+
+function getInitialTheme(): "light" | "dark" {
+  if (typeof document === "undefined") return "light";
+  const stored = localStorage.getItem(THEME_KEY) as "light" | "dark" | null;
+  const theme = stored ?? "light";
+  document.documentElement.classList.toggle("dark", theme === "dark");
+  return theme;
+}
+
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 interface AppState {
@@ -37,11 +47,27 @@ interface AppState {
   setPersona: (id: string) => void;
   toggleTheme: () => void;
   setActivation: (studentId: string, value: boolean) => void;
-  uploadDocument: (input: { title: string; subject: string; term: string; schoolId: string; teacherId: string }) => string;
+  uploadDocument: (input: {
+    title: string;
+    subject: string;
+    term: string;
+    schoolId: string;
+    teacherId: string;
+  }) => string;
   advanceDocument: (id: string) => void;
   sendChatMessage: (studentId: string, text: string) => void;
-  sendDirectMessage: (studentId: string, teacherId: string, text: string, from?: "student" | "teacher") => void;
-  generateQuiz: (input: { schoolId: string; subject: string; topics: string[]; createdBy: string }) => Quiz;
+  sendDirectMessage: (
+    studentId: string,
+    teacherId: string,
+    text: string,
+    from?: "student" | "teacher",
+  ) => void;
+  generateQuiz: (input: {
+    schoolId: string;
+    subject: string;
+    topics: string[];
+    createdBy: string;
+  }) => Quiz;
   recordAttempt: (attempt: Omit<QuizAttempt, "id" | "takenAt">) => void;
 }
 
@@ -56,7 +82,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   directMessages: DIRECT_MESSAGES,
   quizzes: QUIZZES,
   attempts: QUIZ_ATTEMPTS,
-  theme: "light",
+  theme: getInitialTheme(),
 
   setPersona: (id) => set({ activePersonaId: id }),
 
@@ -65,6 +91,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const theme = s.theme === "light" ? "dark" : "light";
       if (typeof document !== "undefined") {
         document.documentElement.classList.toggle("dark", theme === "dark");
+        localStorage.setItem(THEME_KEY, theme);
       }
       return { theme };
     }),
@@ -173,10 +200,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     set((s) => {
       const pct = Math.round((attempt.score / Math.max(1, attempt.total)) * 100);
       return {
-        attempts: [
-          { ...attempt, id: uid(), takenAt: new Date().toISOString() },
-          ...s.attempts,
-        ],
+        attempts: [{ ...attempt, id: uid(), takenAt: new Date().toISOString() }, ...s.attempts],
         students: s.students.map((st) =>
           st.id === attempt.studentId
             ? {

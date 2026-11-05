@@ -63,7 +63,10 @@ function Dashboard() {
             value={student.weaknesses.filter((w) => w.mastery < 50).length}
             tone="warning"
           />
-          <StatCard label="Class materials" value={documents.filter((d) => d.schoolId === school.id).length} />
+          <StatCard
+            label="Class materials"
+            value={documents.filter((d) => d.schoolId === school.id).length}
+          />
         </div>
 
         <Card className="mt-5 shadow-card">
@@ -93,9 +96,7 @@ function Dashboard() {
   if (persona.role === "teacher") {
     const teacher = teachers.find((t) => t.id === persona.teacherId)!;
     const classStudents = students.filter((s) => s.schoolId === teacher.schoolId);
-    const struggling = classStudents.filter((s) =>
-      s.weaknesses.some((w) => w.mastery < 50),
-    ).length;
+    const struggling = classStudents.filter((s) => s.weaknesses.some((w) => w.mastery < 50)).length;
     return (
       <div>
         <PageHeader
@@ -117,7 +118,10 @@ function Dashboard() {
             value={documents.filter((d) => d.teacherId === teacher.id).length}
             tone="action"
           />
-          <StatCard label="Quizzes generated" value={quizzes.filter((q) => q.createdBy === teacher.id).length} />
+          <StatCard
+            label="Quizzes generated"
+            value={quizzes.filter((q) => q.createdBy === teacher.id).length}
+          />
         </div>
         <Card className="mt-5 shadow-card">
           <CardHeader>
@@ -142,7 +146,8 @@ function Dashboard() {
                 </div>
                 <MasteryBar
                   value={Math.round(
-                    s.weaknesses.reduce((a, w) => a + w.mastery, 0) / Math.max(1, s.weaknesses.length),
+                    s.weaknesses.reduce((a, w) => a + w.mastery, 0) /
+                      Math.max(1, s.weaknesses.length),
                   )}
                 />
               </div>
@@ -168,7 +173,7 @@ function Dashboard() {
         subtitle={
           persona.role === "system_admin"
             ? "All Lagos pilot schools"
-            : scopedSchools[0]?.name ?? "School"
+            : (scopedSchools[0]?.name ?? "School")
         }
         action={
           <Button asChild>
@@ -213,7 +218,11 @@ function Dashboard() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Pending</p>
-                  <p className={pending ? "font-semibold text-destructive" : "font-semibold text-action"}>
+                  <p
+                    className={
+                      pending ? "font-semibold text-destructive" : "font-semibold text-action"
+                    }
+                  >
                     {pending}
                   </p>
                 </div>
